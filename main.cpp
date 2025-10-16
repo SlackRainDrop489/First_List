@@ -56,7 +56,7 @@ void demonstrateInventory() {
     inventory.addBook(new Book("Pride and Prejudice", "Jane Austen", 11.75, 1813));
     inventory.addBook(new Book("The Catcher in the Rye", "J.D. Salinger", 15.99, 1951));
     inventory.addBook(new Book("Animal Farm", "George Orwell", 10.50, 1945));
-
+    //std::cout << "stuff" << std::endl;
     // Display all books (should be in alphabetical order)
     inventory.displayAll();
 
