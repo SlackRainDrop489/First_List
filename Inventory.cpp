@@ -122,14 +122,13 @@ size_t Inventory::getBookCount() const {
 	size_t totalBooks = 0;
 	Node *newNode = this->head;
 	while (newNode != nullptr) {
+		++totalBooks;
 		try {
 			newNode = newNode->next;
-		}
-		catch (...) { // Generic catch-all block for any other exceptions (should be the last)
+		} catch (...) { // Generic catch-all block for any other exceptions (should be the last)
 			std::cout << "apisgfaegpe-gbepgbw-gb-wegbu-wbu" << std::endl;
 			std::cerr << "An unexpected error occurred." << std::endl;
 		}
-		++totalBooks;
 
 	}
 	return totalBooks;
