@@ -4,7 +4,6 @@
 
 // Constructor
 Inventory::Inventory() {
-	// Vector is automatically initialized as empty
 	this->head = nullptr;
 }
 
