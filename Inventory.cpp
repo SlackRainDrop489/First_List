@@ -6,6 +6,7 @@
 // Constructor
 Inventory::Inventory() {
 	// Vector is automatically initialized as empty
+	this->head = nullptr;
 }
 
 // Destructor - Important! Clean up dynamically allocated memory
@@ -15,15 +16,14 @@ Inventory::~Inventory() {
 	//     delete book;
 	// }
 	// books.clear();
-	Node *newNode = nullptr;
-	Node *prevNode = this->head;
+	Node *newNode = this->head;
+	Node *nextNode = nullptr;
 	do {
-		if (prevNode->data != nullptr) {
-			newNode = prevNode->next;
-			delete prevNode->data;
-			delete prevNode;
-		}
-	} while (newNode->next != nullptr);
+		nextNode = newNode->next;
+		delete newNode->data;
+		delete newNode;
+		newNode = nextNode;
+	} while (newNode != nullptr);
 }
 
 // Add a book to the inventory (sorted by title alphabetically)
@@ -63,8 +63,7 @@ void Inventory::displayAll() const {
 	}
 
 	std::cout << "\n=== INVENTORY CONTENTS ===\n";
-	std::cout << "FIX BOOK COUNT" << std::endl;
-	 std::cout << "Total books: " << Inventory::getBookCount() << "\n\n";
+	std::cout << "Total books: " << Inventory::getBookCount() << "\n\n";
 
 	// for (size_t i = 0; i < Inventory::getBookCount(); ++i) {
 	//     std::cout << "Book #" << (i + 1) << ":\n";
@@ -101,20 +100,24 @@ void Inventory::removeBook(const std::string &title) {
 	Node *prevNode = nullptr;
 	bool found = false;
 	do {
-		if (newNode->data != nullptr) {
+		if (newNode != nullptr) {
 			if (newNode->data->getTitle() == title) {
 				found = true;
+				break;
 			} else {
 				prevNode = newNode;
 				newNode = newNode->next;
 			}
 		}
-	} while (newNode->next != nullptr or found == true);
+	} while (newNode != nullptr);
 	if (found == true) {
 		prevNode->next = newNode->next;
+		std::cout << "Removing book: " << newNode->data->getTitle() << "\n";
 
 		delete newNode->data;
 		delete newNode;
+	} else if (found == false) {
+		std::cout << "Book '" << title << "' not found in inventory.\n";
 	}
 }
 
@@ -124,14 +127,7 @@ size_t Inventory::getBookCount() const {
 	Node *newNode = this->head;
 	while (newNode != nullptr) {
 		++totalBooks;
-		__try {
-			newNode = newNode->next;
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER) { // Generic catch-all block for any other exceptions (should be the last)
-			std::cout << "apisgfaegpe-gbepgbw-gb-wegbu-wbu" << std::endl;
-			std::cerr << "An unexpected error occurred." << std::endl;
-		}
-
+		newNode = newNode->next;
 	}
 	return totalBooks;
 }
@@ -150,11 +146,19 @@ Book *Inventory::findBook(const std::string &title) const {
 		if (newNode->data != nullptr) {
 			if (newNode->data->getTitle() == title) {
 				found = true;
+				break;
 			} else {
 				newNode = newNode->next;
 			}
+			if (!newNode) {
+				std::cout << "Book '" << title << "' not found in inventory.\n";
+				break;
+			}
 		}
-	} while (newNode->next != nullptr || found == false);
+	} while (newNode != nullptr);
+	if (found == false) {
+		return nullptr;
+	}
 	return newNode->data;
 }
 

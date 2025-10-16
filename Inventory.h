@@ -16,7 +16,7 @@ class Inventory {
 			Book *data;
 			Node *next;
 
-			Node(Book *bookPtr) : data(bookPtr), next(nullptr) {
+			explicit Node(Book *bookPtr) : data(bookPtr), next(nullptr) {
 			}
 		};
 
