@@ -1,7 +1,6 @@
 #include "Inventory.h"
 #include <iostream>
 #include <algorithm>
-#include <windows.h>
 
 // Constructor
 Inventory::Inventory() {
@@ -11,19 +10,16 @@ Inventory::Inventory() {
 
 // Destructor - Important! Clean up dynamically allocated memory
 Inventory::~Inventory() {
-	// Delete all Book objects to prevent memory leaks
-	// for (Book* book : books) {
-	//     delete book;
-	// }
-	// books.clear();
-	Node *newNode = this->head;
-	Node *nextNode = nullptr;
-	do {
-		nextNode = newNode->next;
-		delete newNode->data;
-		delete newNode;
-		newNode = nextNode;
-	} while (newNode != nullptr);
+	Node *current = this->head;
+	while (current != nullptr) {
+		Node *nextNode = current->next; // Store next node before deleting current
+		if (current->data != nullptr) {
+			delete current->data; // Delete the Book object
+			current->data = nullptr; // Prevent double deletion
+		}
+		delete current; // Delete the Node itself
+		current = nextNode; // Move to the next node
+	}
 }
 
 // Add a book to the inventory (sorted by title alphabetically)
@@ -34,24 +30,19 @@ void Inventory::addBook(Book *bookPtr) {
 	}
 
 	Node *newNode = new Node(bookPtr); // Create a new node with the bookPtr
-
-	if (this->head == nullptr) {
-		// If the list is empty
-		this->head = newNode;
-	} else {
-		// Insert at the beginning (for now, sorting will be added later)
+	if (this->head == nullptr || this->head->data->getTitle() > bookPtr->getTitle()) {
 		newNode->next = this->head;
 		this->head = newNode;
+	} else {
+		Node *current = this->head;
+		while (current->next != nullptr && current->next->data->getTitle() < bookPtr->getTitle()) {
+			current = current->next;
+		}
+		newNode->next = current->next;
+		current->next = newNode;
 	}
 
 
-	// Find the correct position to insert (alphabetical order by title)
-	// auto insertPos = std::upper_bound(books.begin(), books.end(), bookPtr,
-	//     [](const Book* a, const Book* b) {
-	//         return a->getTitle() < b->getTitle();
-	//     });
-	//
-	// books.insert(insertPos, bookPtr);
 	std::cout << "Book '" << bookPtr->getTitle() << "' added to inventory.\n";
 }
 
@@ -65,37 +56,21 @@ void Inventory::displayAll() const {
 	std::cout << "\n=== INVENTORY CONTENTS ===\n";
 	std::cout << "Total books: " << Inventory::getBookCount() << "\n\n";
 
-	// for (size_t i = 0; i < Inventory::getBookCount(); ++i) {
-	//     std::cout << "Book #" << (i + 1) << ":\n";
-	//     books[i]->displayInfo();
-	// }
 	Node *newNode = this->head;
 	int i = 0;
 	do {
-		if (newNode->data != nullptr) {
+		if (newNode != nullptr) {
 			std::cout << "Book #" << (i + 1) << ":\n";
 			newNode->data->displayInfo();
 			newNode = newNode->next;
 			++i;
 		}
-	} while (!newNode);
+	} while (newNode != nullptr);
 	std::cout << "\n";
 }
 
 // Remove a book by title
 void Inventory::removeBook(const std::string &title) {
-	// auto it = std::find_if(books.begin(), books.end(),
-	//     [&title](const Book* book) {
-	//         return book->getTitle() == title;
-	//     });
-	//
-	// if (it != books.end()) {
-	//     std::cout << "Removing book: " << (*it)->getTitle() << "\n";
-	//     delete *it; // Free the memory
-	//     books.erase(it);
-	// } else {
-	//     std::cout << "Book '" << title << "' not found in inventory.\n";
-	// }
 	Node *newNode = this->head;
 	Node *prevNode = nullptr;
 	bool found = false;
@@ -134,12 +109,6 @@ size_t Inventory::getBookCount() const {
 
 // Search for a book by title
 Book *Inventory::findBook(const std::string &title) const {
-	// auto it = std::find_if(books.begin(), books.end(),
-	//     [&title](const Book* book) {
-	//         return book->getTitle() == title;
-	//     });
-	//
-	// return (it != books.end()) ? *it : nullptr;
 	Node *newNode = this->head;
 	bool found = false;
 	do {
