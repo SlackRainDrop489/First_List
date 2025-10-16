@@ -1,6 +1,7 @@
 #include "Inventory.h"
 #include <iostream>
 #include <algorithm>
+#include <windows.h>
 
 // Constructor
 Inventory::Inventory() {
@@ -123,9 +124,10 @@ size_t Inventory::getBookCount() const {
 	Node *newNode = this->head;
 	while (newNode != nullptr) {
 		++totalBooks;
-		try {
+		__try {
 			newNode = newNode->next;
-		} catch (...) { // Generic catch-all block for any other exceptions (should be the last)
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER) { // Generic catch-all block for any other exceptions (should be the last)
 			std::cout << "apisgfaegpe-gbepgbw-gb-wegbu-wbu" << std::endl;
 			std::cerr << "An unexpected error occurred." << std::endl;
 		}
